@@ -1,8 +1,11 @@
-import React from 'react'
-import Note from '../Note/Note'
-import ApiContext from '../ApiContext'
-import { findNote } from '../notes-helpers'
-import './NotePageMain.css'
+import React from 'react';
+import Note from '../Note/Note';
+import ApiContext from '../ApiContext';
+import PropTypes from 'prop-types';
+import NoteError from '../NoteError';
+import config from '../config';
+import { Redirect } from 'react-router-dom'
+import './NotePageMain.css';
 
 export default class NotePageMain extends React.Component {
   static defaultProps = {
@@ -12,28 +15,65 @@ export default class NotePageMain extends React.Component {
   }
   static contextType = ApiContext
 
-  handleDeleteNote = noteId => {
-    this.props.history.push(`/`)
+  state = {
+    note: {},
+    toDashboard: false
   }
 
-  render() {
-    const { notes=[] } = this.context
+  componentDidMount() {
     const { noteId } = this.props.match.params
-    const note = findNote(notes, noteId) || { content: '' }
+    fetch(`${config.API_ENDPOINT}/api/notes/${noteId}`, {
+      method: 'GET'
+    })
+      .then(res => {
+        if (!res.ok)
+          return res.json().then(error => Promise.reject(error))
+
+        return res.json()
+      })
+      .then(note => {
+        this.setState({
+          note
+        })
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }
+
+  changeDashboard = () => {
+    this.setState({toDashboard: true})
+  }
+  
+
+  render() {
+    const { id, name, date_published, modified, content } = this.state.note
+    if (this.state.toDashboard === true) {
+      return (
+          <Redirect to='/' />
+      )
+  } else {
     return (
       <section className='NotePageMain'>
-        <Note
-          id={note.id}
-          name={note.name}
-          modified={note.modified}
-          onDeleteNote={this.handleDeleteNote}
-        />
-        <div className='NotePageMain__content'>
-          {note.content.split(/\n \r|\n/).map((para, i) =>
-            <p key={i}>{para}</p>
-          )}
-        </div>
+        <NoteError>
+          <Note
+            id={id}
+            name={name}
+            datePublished={date_published}
+            modified={modified}
+            changeDashboard={this.changeDashboard}
+          />
+          <div className='NotePageMain__content'>
+            {content}
+          </div>
+        </NoteError>
       </section>
     )
   }
 }
+}
+
+NotePageMain.propTypes = {
+  match: PropTypes.object
+};
+
