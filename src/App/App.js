@@ -7,7 +7,7 @@ import NoteListMain from '../NoteListMain/NoteListMain'
 import NotePageMain from '../NotePageMain/NotePageMain'
 import { findNote, findFolder} from '../notes-helpers'
 import config from '../config'
-//import EditNotePage from '../EditNote/EditNotePage'
+import EditNotePage from '../EditNote/EditNotePage'
 import AddFolder from '../AddFolder/AddFolder'
 import AddNote from '../AddNote/AddNote'
 import ApiContext from '../ApiContext'
@@ -25,8 +25,8 @@ class App extends Component {
 
     fetchData() {
         Promise.all([
-            fetch(`${config.API_ENDPOINT}/api/notes`),
-            fetch(`${config.API_ENDPOINT}/api/folders`)
+            fetch(`${config.API_ENDPOINT}/folders`),
+            fetch(`${config.API_ENDPOINT}/notes`)
             ], 
             {
                 method: 'GET',
@@ -141,6 +141,7 @@ class App extends Component {
                 />
                 <Route path="/add-folder" component={AddFolder} />
                 <Route path="/add-note" component={AddNote} />
+                <Route path='/edit/:noteId' component={EditNotePage} />
             </>
         )
     }
@@ -171,4 +172,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default App

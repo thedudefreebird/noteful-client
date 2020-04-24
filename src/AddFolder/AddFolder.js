@@ -23,7 +23,7 @@ class AddFolder extends React.Component {
     }
 
     addFolder(folderName) {
-        fetch(`${config.API_ENDPOINT}/api/folders`, 
+        fetch(`${config.API_ENDPOINT}/folders`, 
             {
                 method: 'POST',
                 headers: {

@@ -22,7 +22,7 @@ export default class NotePageMain extends React.Component {
 
   componentDidMount() {
     const { noteId } = this.props.match.params
-    fetch(`${config.API_ENDPOINT}/api/notes/${noteId}`, {
+    fetch(`${config.API_ENDPOINT}/notes/${noteId}`, {
       method: 'GET'
     })
       .then(res => {
